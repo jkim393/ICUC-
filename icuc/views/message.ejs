@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+  <head>
+    <title>IC UC - Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box;}
+      body { font: 13px Helvetica, Arial; }
+      
+      #messageForm { 
+         border: 1px; background: #1295d8; padding-left: 4%; position: fixed; bottom: 0; width: 95%; 
+      }
+      
+      #sidehead {
+        top: 0; position: fixed; background: #1295d8; padding-bottom: 10px;
+      }
+      
+      #m { 
+          border: 0; padding: 10px; width: 90%; margin-right: .5%; 
+      }
+      #messages { list-style-type: none; margin: 0; padding-bottom: 50px; padding-left:4%; }
+      #messages li { padding: 5px 10px; }
+      #messages h6 { color: #7a6e76; }
+      #groups { padding-top: 110px ;}
+      #groups  center {color: #FFD200}
+      
+    .sidenav {
+        height: 100%;
+        width: 190px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #1295d8;
+        overflow-x: hidden;
+        padding-top: 20px;
+    }
+    
+    .sidenav h1{
+      color: #FFD200;
+    }
+    
+    .sidenav a {
+        padding: 6px 8px 6px 16px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #efefef;
+        display: block;
+    }
+    
+    .sidenav a:hover {
+        color: #FFD200;
+    }
+    
+    .main {
+        margin-left: 160px; /* Same as the width of the sidenav */
+        font-size: 14px; /* Increased text to enable scrolling */
+        /*padding: 0px 10px;*/
+    }
+    
+    @media screen and (max-height: 450px) {
+        .sidenav {padding-top: 15px;}
+        .sidenav a {font-size: 18px;}
+    }
+    </style>
+  </head>
+  <body>
+    <!--sidenav-->
+    <div class="sidenav">
+      
+      <div id="sidehead">
+        <h1><center><a href="https://find-uc-kids-ggome009.c9users.io">IC UC</a></center></h1>
+        
+        <center><input id="n" type="text" class="input-block-level" placeholder="Your Name"></center>
+        <a href="#New Group">New Group</a>
+        <center>
+          <form id="ng">
+            <input id="newGroup" type="text" class="input-block-level" placeholder="New Group">
+          </form>
+        </center>
+      </div>
+      
+      <div>  
+        <ul id="groups"></ul>
+      </div>
+      
+    </div>
+
+    <!--main-->
+    <div class="main">
+      <!--message box-->
+      <div id="mBox">  
+        <ul id="messages"></ul>
+      </div>
+      
+      <div>
+          <form id="messageForm" action="">
+              <input id="m" autocomplete="off" placeholder="Your Message"/>
+          </form>
+      </div>
+    </div>
+    
+    
+    <!--script-->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+    
+      $(function () {
+        
+        var socket = io(); //connect to the host that serves the page
+        
+        $('#messageForm').submit(function(){
+            socket.emit('messager name', $('#n').val())
+            socket.emit('chat message', $('#m').val());
+            $('#m').val('');
+            return false;
+        });
+        
+        $('#ng').submit(function(){
+            socket.emit('subscribe', $('#newGroup').val());
+            $('#newGroup').val('');
+            return false;
+        });
+        
+        socket.on('messager name', function(nam){
+          var d = new Date();
+          var locale = d.toLocaleTimeString();
+          
+          $('#messages').append('<li><b>'+nam+'</b> <h6>'+locale+'</h6></li>');
+        });
+        
+        socket.on('chat message', function(msg){
+          $('#messages').append("<li>"+msg+"</li>");
+        });
+        
+        socket.on('subscribe', function(newg){
+          $('#groups').append("<li><center><a href=\""+newg+"\">"+newg+"</a></center></li>");
+          $('#groups').append("<center>_______________</center>");
+        });
+        
+        //button for creating new room
+        document.getElementById("newRoom").addEventListener("click", myFunction);
+        function myFunction() {
+            socket.emit('subscribe', $('#hu').val()); //get string data
+        }
+        
+        //socket.emit('subscribe', 'roomTwo');
+        
+      });
+    
+    </script>
+    
+  </body>
+</html>
