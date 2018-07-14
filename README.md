@@ -16,3 +16,4 @@ Currently the chat bot is in it's own separate Python file. Running the Python s
 ## Try it yourself
 
 https://find-uc-kids-ggome009.c9users.io/message
+(The server isn't running now)
